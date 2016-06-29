@@ -1,0 +1,91 @@
+/*
+ *TCSS 305 - Easy Street
+ * Spring 2016
+ */
+package model;
+
+import java.util.ArrayList;
+import java.util.Map;
+
+/**
+ * @author concox
+ * @version 1.0
+ *
+ */
+public final class Bicycle extends AbstractVehicle {
+    /**
+     * Amount of turns it takes for the bicycle to revive.
+     */
+    private static final int BIKE_DEATH = 50;
+    /**
+     * Constructs a human, with x,y and a direction.
+     * 
+     * @param theX The X value of the human.
+     * @param theY The Y value of the human.
+     * @param theDir The initial direction of the human.
+     */
+    public Bicycle(final int theX, final int theY, final Direction theDir) {
+        super(theX, theY, theDir);
+        myDeathTime = BIKE_DEATH;
+    }
+    @Override
+    public boolean canPass(final Terrain theTerrain, final Light theLight) {
+        boolean isPassing = false;
+        if (theTerrain == Terrain.TRAIL || theTerrain == Terrain.STREET) {
+            isPassing = true;
+        }
+        if (theTerrain == Terrain.CROSSWALK 
+                        || theTerrain == Terrain.LIGHT) {
+            if (theLight == Light.GREEN) {
+                isPassing = true;
+            } else {
+                isPassing = false;
+            }            
+        }
+        return isPassing;
+    }
+    
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors) {
+        Direction newDir = myDir;
+        boolean trailPresent = false;
+        myValidDir = new ArrayList<>();
+        for (final Map.Entry<Direction, Terrain> entry : theNeighbors.entrySet()) {
+            if (!trailPresent) {
+                if (entry.getValue() == Terrain.CROSSWALK 
+                                || entry.getValue() == Terrain.LIGHT
+                                || entry.getValue() == Terrain.STREET) {
+                    if (entry.getKey() == myDir) {
+                        myValidDir.add(0, entry.getKey());
+                    }
+                    if (entry.getKey() != myDir.reverse()) {
+                        myValidDir.add(entry.getKey());
+                    }
+                } 
+                if (entry.getValue() == Terrain.TRAIL && entry.getKey() != myDir.reverse()) {
+                    trailPresent = true;
+                    newDir = entry.getKey();
+                } 
+            }
+        }
+        if (!trailPresent) {
+            if (myValidDir.size() > 0) {
+                newDir = myValidDir.get(0);            
+            } else { 
+                newDir = myDir.reverse();
+            }            
+        }
+        return newDir;
+    }
+    
+}
+//                if (entry.getKey() != myDir.reverse()) {
+//                    if (entry.getKey() == myDir.right()) {
+//                        newDir = entry.getKey();
+//                    }
+//                    if (entry.getKey() == myDir.left()) {
+//                        newDir = entry.getKey();
+//                    } else {
+//                        newDir = entry.getKey();
+//                    }
+//                } 

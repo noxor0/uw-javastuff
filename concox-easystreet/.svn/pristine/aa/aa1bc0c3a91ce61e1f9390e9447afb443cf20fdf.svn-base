@@ -1,0 +1,49 @@
+/*
+ * TCSS 305 - Easy Street
+ * Spring 2016
+ */
+package tests;
+
+import static org.junit.Assert.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import model.Atv;
+import model.Direction;
+import model.Taxi;
+import model.Terrain;
+import model.Truck;
+import org.junit.Test;
+
+
+/**
+ * @author noxor
+ * @version 1.0
+ */
+public class TaxiTest {
+
+    /**
+     * 
+     */
+    @Test
+    public void test() {
+        final Taxi taxi = new Taxi(1, 0, Direction.NORTH);
+        final Truck truck = new Truck(0, 0, Direction.NORTH);
+        final Atv atv = new Atv(0, 0, Direction.NORTH);
+        taxi.collide(truck);
+        truck.collide(atv);
+        atv.collide(truck);
+        
+        final Map<Direction, Terrain> neighbors = new HashMap<Direction, Terrain>();
+        neighbors.put(Direction.WEST, Terrain.GRASS);
+        neighbors.put(Direction.NORTH, Terrain.WALL);
+        neighbors.put(Direction.EAST, Terrain.GRASS);
+        neighbors.put(Direction.SOUTH, Terrain.STREET);
+        
+        assertEquals(0, 0);
+        
+        
+        
+    }
+}

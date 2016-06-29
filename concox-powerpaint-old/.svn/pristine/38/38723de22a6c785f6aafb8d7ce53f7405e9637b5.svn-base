@@ -1,0 +1,63 @@
+package tools;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Shape;
+import java.awt.Stroke;
+
+/**
+ * @author concox
+ * @version 1.0
+ */
+public class Drawings {
+    /**
+     * The shape shape which is drawn.
+     */
+    private final Shape myShape;
+    
+    /**
+     * The color of the shape.
+     */
+    private final Color myColor;
+    
+    /**
+     * The stroke width of the pen used to make the drawing.
+     */
+    private final Stroke myStroke;
+    
+    /**
+     * Constructor to create a Drawing.
+     * @param theShape the Shape of the drawing.
+     * @param theColor the Color of the drawing.
+     * @param theStroke the Stroke width of the pen use to make the drawing.
+     */
+    public Drawings(final Shape theShape, final Color theColor, final float theStroke) {
+        myShape = theShape;
+        myColor = theColor;
+        myStroke = new BasicStroke(theStroke); 
+    }
+
+    /**
+     * Return current Shape.
+     * @return current Shape.
+     */
+    public Shape getShape() {
+        return myShape;
+    }
+    
+    /**
+     * Return current color.
+     * @return current color.
+     */
+    public Color getColor() {
+        return new Color(myColor.getRGB());
+    }
+
+    /**
+     * Return current pen width.
+     * @return current Stroke.
+     */
+    public Stroke getStroke() {
+        return myStroke;
+    }
+}

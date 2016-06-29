@@ -1,0 +1,151 @@
+ /* 
+ *TCSS 305 - Assignment 4: PowerPaint
+ */
+package tools;
+
+import gui.PowerPaintMenus;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JPanel;
+
+/**
+ * White space in the middle of the program to draw on.
+ * 
+ * @author concox
+ * @version 1.0
+ */
+public class Canvas extends JPanel {
+    /**
+     * The width of the panel.
+     */
+    public static final int WIDTH = 600;
+    /**
+     * The height of the panel.
+     */
+    public static final int HEIGHT = 300;
+    /**
+     * The serial version UID.
+     */
+    private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private static List<Drawings> myFinishedDrawings = new ArrayList<>();
+    /**
+     * 
+     */
+    private ToolInterface myTool = PowerPaintMenus.getTool();
+    /**
+     * 
+     */
+    private Shape myCurrentShape;
+    /**
+     * 
+     */
+    private boolean myHasShape;
+    /**
+     * 
+     */
+    public Canvas() {
+        super();
+        final MyMouseListener listener = new MyMouseListener();
+        setBackground(Color.WHITE);
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        addMouseListener(listener);
+        addMouseMotionListener(listener);
+        myHasShape = false;
+    } 
+    /**
+     * Paints the current path.
+     * 
+     * @param theGraphics The graphics context to use for painting.
+     */
+    @Override
+    public void paintComponent(final Graphics theGraphics) {
+        super.paintComponent(theGraphics);
+        final Graphics2D g2d = (Graphics2D) theGraphics; 
+        g2d.setPaint(PowerPaintMenus.getDrawColor());
+        g2d.setStroke(new BasicStroke(PowerPaintMenus.getThickness()));
+        if (!myFinishedDrawings.isEmpty()) {
+            for (final Drawings drawing : myFinishedDrawings) {
+                g2d.setColor(drawing.getColor());
+                g2d.setStroke(drawing.getStroke());
+                if (PowerPaintMenus.isFilled()) {
+                    g2d.fill(drawing.getShape());
+                } else {
+                    g2d.draw(drawing.getShape()); 
+                }
+            }
+        }
+        if (myHasShape) {
+            g2d.draw(myCurrentShape);
+        }
+    }    
+    /**
+     * 
+     */
+    public static void clearDrawings() {
+        myFinishedDrawings.clear();
+        
+    }
+    /**
+     * Inner Mouse Listener class that runs the start, move and end methods of each tools.
+     * 
+     * @author concox
+     * @version 1.0
+     *
+     */
+    private class MyMouseListener extends MouseAdapter {
+        /**
+         * Handles a click event.
+         * 
+         * @param theEvent The event.
+         */
+        @Override
+        public void mousePressed(final MouseEvent theEvent) {
+            myTool = PowerPaintMenus.getTool();
+            if (!myHasShape) {
+                myHasShape = true;
+                myCurrentShape = myTool.start(theEvent.getX(), theEvent.getY());
+                repaint();
+            }
+        }
+        @Override
+        public void mouseDragged(final MouseEvent theEvent) {
+            if (myHasShape) {
+                myCurrentShape = myTool.move(theEvent.getX(), theEvent.getY());
+                repaint();
+            }
+        }
+        @Override
+        public void mouseReleased(final MouseEvent theEvent) {
+            if (myHasShape) {
+                myCurrentShape = myTool.end(theEvent.getX(), theEvent.getY());
+                repaint();
+                myHasShape = false;
+                if (PowerPaintMenus.isFilled()) {
+                    myFinishedDrawings.add(new Drawings(
+                                                        myCurrentShape,
+                                                        PowerPaintMenus.getDrawColor(),
+                                                        PowerPaintMenus.getFillColor(),
+                                                        PowerPaintMenus.getThickness()));
+                } else {
+                    myFinishedDrawings.add(new Drawings(
+                                                        myCurrentShape,
+                                                        PowerPaintMenus.getDrawColor(),
+                                                        PowerPaintMenus.getThickness()));
+                }
+            }
+        }
+    }
+}

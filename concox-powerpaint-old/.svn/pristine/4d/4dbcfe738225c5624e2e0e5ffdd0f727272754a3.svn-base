@@ -1,0 +1,122 @@
+ /* 
+ *TCSS 305 - Assignment 4: PowerPaint
+ */
+package tools;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Line2D;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JPanel;
+
+/**
+ * White space in the middle of the program to draw on.
+ * 
+ * @author concox
+ * @version 1.0
+ */
+public class Canvas extends JPanel {
+    /**
+     * The width of the panel.
+     */
+    public static final int WIDTH = 600;
+    /**
+     * The height of the panel.
+     */
+    public static final int HEIGHT = 300;
+    /**
+     * The color to paint with.
+     */
+    public static final Color FOREGROUND_COLOR = new Color(93, 100, 18);
+    /**
+     * The serial version UID.
+     */
+    private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private final List<Shape> myFinishedDrawings;
+    /**
+     * 
+     */
+    private int myX;
+    /**
+     * 
+     */
+    private int myY;
+    /**
+     * 
+     */
+    private final Line2D myLine;
+    /**
+     * 
+     */
+    public Canvas() {
+        super();
+        setBackground(Color.WHITE);
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        myFinishedDrawings = new ArrayList<>();
+        addMouseListener(new MyMouseListener());
+        myLine = new Line2D.Double();
+        
+    }
+    
+    /**
+     * Paints the current path.
+     * 
+     * @param theGraphics The graphics context to use for painting.
+     */
+    @Override
+    public void paintComponent(final Graphics theGraphics) {
+        super.paintComponent(theGraphics);
+        final Graphics2D g2d = (Graphics2D) theGraphics;
+
+        g2d.setPaint(FOREGROUND_COLOR);
+        g2d.setStroke(new BasicStroke(1));
+        g2d.draw(myLine);
+    }
+    
+    
+    /**
+     * blah.
+     * 
+     * @author noxor
+     * @version
+     *
+     */
+    private class MyMouseListener extends MouseAdapter {
+        /**
+         * Handles a click event.
+         * 
+         * @param theEvent The event.
+         */
+        @Override
+        public void mousePressed(final MouseEvent theEvent) {
+            myX = theEvent.getX();
+            myY = theEvent.getY();
+            myLine.setLine(theEvent.getX(), theEvent.getY(), theEvent.getX(), theEvent.getY());
+            repaint();
+        }
+        
+        @Override
+        public void mouseDragged(final MouseEvent theEvent) {
+            myLine.setLine(myX, myY, theEvent.getX(), theEvent.getY());
+            repaint();
+        }
+        
+        @Override
+        public void mouseReleased(final MouseEvent theEvent) {
+            myLine.setLine(myX, myY, theEvent.getX(), theEvent.getY());
+            repaint();
+            myFinishedDrawings.add(myLine);
+        }
+    }
+}

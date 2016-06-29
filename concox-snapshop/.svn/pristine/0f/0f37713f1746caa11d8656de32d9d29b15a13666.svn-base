@@ -1,0 +1,100 @@
+// finish (and comment) me!
+
+package gui;
+
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+/**
+ * 
+ * @author ???
+ * @version ???
+ */
+public class SnapShopGUI {
+    /**
+     * 
+     */
+    private static final int SEVEN = 7;
+    
+    /**
+     * 
+     */
+    private final JFrame myFrame = new JFrame("Snapshot"); 
+    
+    /**
+     * 
+     */
+    public void start() {
+        final JPanel westPanel = new JPanel();
+        final JPanel southPanel = new JPanel();
+        final JButton edgeDetect = new JButton("Edge Detect");
+        final JButton edgeHighlight = new JButton("Edge Highlight");
+        final JButton flipHorizontal = new JButton("Flip Horizontal");
+        final JButton flipVertical = new JButton("Flip Vertical");
+        final JButton grayscale = new JButton("Grayscale");
+        final JButton sharpen = new JButton("Sharpen");
+        final JButton soften = new JButton("Soften");
+        
+        
+        
+        myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        myFrame.setLocationRelativeTo(null);
+        
+        westPanel.setLayout(new GridLayout(SEVEN, 1));
+        westPanel.add(createButton(edgeDetect.getText()));
+        westPanel.add(createButton(edgeHighlight.getText()));
+        westPanel.add(createButton(flipHorizontal.getText()));
+        westPanel.add(createButton(flipVertical.getText()));
+        westPanel.add(createButton(grayscale.getText()));
+        westPanel.add(createButton(sharpen.getText()));
+        westPanel.add(createButton(soften.getText()));
+        
+        southPanel.add(new JButton("Open..."));
+        southPanel.add(new JButton("Save As..."));
+        southPanel.add(new JButton("Close Image"));
+        
+        
+        //TODO: change this
+        myFrame.add(new JButton("Picture goes here"));
+        myFrame.add(westPanel, BorderLayout.WEST);
+        myFrame.add(southPanel, BorderLayout.SOUTH);
+        
+        
+        myFrame.pack();
+        myFrame.setVisible(true);
+    }
+    
+    /**
+     * @param theString buttonPassed in
+     * @return returns the button
+     */
+    private JButton createButton(final String theString) {
+        final JButton button = new JButton(theString);
+        
+        /**
+         * An inner class that does something.
+         */
+        class MyActionListener implements ActionListener {
+            /**
+             * Does something with the button
+             * 
+             * @param theEvent the event, ignored.
+             */
+            public void actionPerformed(final ActionEvent theEvent) {
+                System.err.println(theEvent);
+                ((JButton) theEvent.getSource()).setEnabled(false);
+            }
+
+        }
+        button.addActionListener(new MyActionListener());
+        return button;
+    }
+    
+    
+}

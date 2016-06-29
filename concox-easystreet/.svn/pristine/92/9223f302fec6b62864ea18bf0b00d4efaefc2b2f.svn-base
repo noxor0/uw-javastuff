@@ -1,0 +1,76 @@
+/*
+ *TCSS 305 - Easy Street
+ *Spring 2016 
+ */
+package model;
+
+import java.util.ArrayList;
+import java.util.Map;
+
+/**
+ * @author noxor
+ * @version 1.0
+ */
+public class Taxi extends AbstractVehicle {
+    
+    /**
+     * Amount of turns it takes for the taxi to revive.
+     */
+    private static final int TAXI_DEATH = 10;
+
+    /**
+     * Constructs a human, with x,y and a direction.
+     * 
+     * @param theX The X value of the taxi.
+     * @param theY The Y value of the taxi.
+     * @param theDir The initial direction of the taxi.
+     */
+    public Taxi(final int theX, final int theY, final Direction theDir) {
+        super(theX, theY, theDir);
+        myDeathTime = TAXI_DEATH;
+    }
+    
+    @Override
+    public boolean canPass(final Terrain theTerrain, final Light theLight) {
+        boolean isPassing = false;
+        if (theTerrain == Terrain.STREET) {
+            isPassing = true;
+        }
+        if (theTerrain == Terrain.CROSSWALK) {
+            isPassing = true;
+        }
+        if (theTerrain == Terrain.LIGHT) {
+            if (theLight == Light.RED) {
+                isPassing = false;
+            } else { 
+                isPassing = true;
+            }
+        }
+        return isPassing;
+    }
+    
+    
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors) {
+        Direction newDir = myDir;
+        myValidDir = new ArrayList<>();
+        for (final Map.Entry<Direction, Terrain> entry: theNeighbors.entrySet()) {
+            if (entry.getValue() == Terrain.STREET 
+                            || entry.getValue() == Terrain.LIGHT 
+                            || entry.getValue() == Terrain.CROSSWALK) {
+                if (entry.getKey() == myDir) {
+                    myValidDir.add(0, entry.getKey());
+                }
+                if (entry.getKey() != myDir.reverse()) {
+                    myValidDir.add(entry.getKey());
+                }
+            }
+        }
+        if (myValidDir.size() > 0) {
+            newDir = myValidDir.get(0);            
+        } else { 
+            newDir = myDir.reverse();
+        }
+        return newDir;
+    }
+}

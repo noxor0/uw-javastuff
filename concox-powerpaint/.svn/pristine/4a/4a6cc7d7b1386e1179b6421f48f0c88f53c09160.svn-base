@@ -1,0 +1,64 @@
+package tools;
+
+import java.awt.Shape;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
+
+/**
+ * Path too.
+ * 
+ * @author noxor
+ * @version 1.0
+ *
+ */
+public class PencilTool implements ToolInterface {
+    /**
+     * 
+     */
+    private Path2D myPath;
+    /**
+     * 
+     */
+    private int myX;
+    /**
+     * 
+     */
+    private int myY;
+    /**
+     * 
+     */
+    public PencilTool() {
+        super();
+        myX = 0;
+        myY = 0;
+        myPath = new GeneralPath();
+        myPath.setWindingRule(GeneralPath.WIND_EVEN_ODD);
+    }
+
+    @Override
+    public Shape start(final int theX, final int theY) {
+        myX = theX;
+        myY = theY;
+        myPath.moveTo(theX, theY);
+        return (Shape) myPath.clone();
+    }
+
+    @Override
+    public Shape move(final int theX, final int theY) {
+        myPath.lineTo(theX, theY);
+        return (Shape) myPath.clone();
+    }
+
+    @Override
+    public Shape end(final int theX, final int theY) {
+        myPath.lineTo(theX, theY);
+        return (Shape) myPath.clone();
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        return "Pencil";
+    }
+
+}

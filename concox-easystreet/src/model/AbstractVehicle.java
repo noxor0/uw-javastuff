@@ -1,0 +1,216 @@
+/*
+ * TCSS 305 - Easy Street
+ * Spring 2016
+ */
+package model;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+/**
+ * @author concox
+ * @version 1.0
+ *
+ */
+public abstract class AbstractVehicle implements Vehicle { 
+    /**
+     * A static number to determine if the myVaildDir list is full or not.
+     * If the size of the myVaildDir List is 3, there can be no more direction options.
+     */
+    protected static final int THREE = 3;
+    /**
+     * Just the number 4, created to avoid a magic number error.
+     */
+    protected static final int FOUR = 4;
+    /**
+     * Just the number 5, created to avoid a magic number error.
+     */
+    protected static final int FIVE = 5;
+    /**
+     * Holds the order of collisions. Higher number survives the exchange. 
+     */
+    protected static final String[] COLLISION_ARRAY = new String[FIVE]; 
+    /**
+     * X value of the vehicle.
+     */
+    protected int myX;
+    /**
+     * Y value of the vehicle.
+     */
+    protected int myY;
+    /**
+     * Initial X value of the vehicle.
+     */
+    protected int myInitalX;
+    /** 
+     * Initial Y value of the vehicle.
+     */
+    protected int myInitalY;
+    /**
+     * Direction of the vehicle.
+     */
+    protected Direction myDir;
+    /**
+     * Initial direction for the vehicle.
+     */
+    protected Direction myInitialDir;
+    /**
+     * Determines if the vehicle can move or not, also determines which gif to use. 
+     */
+    protected boolean myLife = true; //false dead
+    /**
+     * Amount of turns it takes for the vehicle to revive.
+     */
+    protected int myDeathTime;
+    /**
+     * An array list that holds all valid directions for the vehicle.
+     */
+    protected List<Direction> myValidDir; 
+    /**
+     * Random number generator used for all vehicles. 
+     */
+    protected Random myRandGen;
+    /**
+     * Keeps track of turns left till revive.
+     */
+    private int myTillAlive;
+    
+    
+    /**
+     * Protected constructor in abstract class.
+     * 
+     * @param theX The X value of the vehicle.
+     * @param theY The Y value of the vehicle.
+     * @param theDir The initial direction of the vehicle.
+     */
+    protected AbstractVehicle(final int theX, final int theY, final Direction theDir) {
+        if (theDir == null) { 
+            myDir = Direction.random(); 
+        } else { 
+            myDir = theDir;
+        }
+        myX = theX;
+        myY = theY;
+        myInitalX = theX;
+        myInitalY = theY;
+        myInitialDir = myDir;
+        myRandGen = new Random(); 
+        makeCollisionArray();
+    }
+    
+    /**
+     * Fills the collision array.
+     * Holds the order of collisions. Higher number survives the exchange. 
+     */
+    private void makeCollisionArray() {
+        COLLISION_ARRAY[0] = "Human";
+        COLLISION_ARRAY[1] = "Bike";
+        COLLISION_ARRAY[2] = "Atv";
+        COLLISION_ARRAY[THREE] = "Taxi";
+        COLLISION_ARRAY[FOUR] = "Truck";
+    }
+
+    @Override
+    public void collide(final Vehicle theOther) {
+        int collNumb = 0;
+        int otherCollNumb = 0;
+        if (isAlive() && theOther.isAlive() 
+                        && myX == theOther.getX() 
+                        && myY == theOther.getY()) {
+            for (int i = 0; i <= FOUR; i++) {
+                if (getClass().getSimpleName().equals(COLLISION_ARRAY[i])) {
+                    collNumb = i;
+                }
+                if (theOther.getClass().getSimpleName().equals(COLLISION_ARRAY[i])) {
+                    otherCollNumb = i;
+                }
+            } 
+        }
+        if (collNumb < otherCollNumb) { //this dies
+            myLife = false;
+        }
+    }
+
+    @Override
+    public final int getDeathTime() {
+        return myDeathTime;
+    }
+
+    @Override
+    public String getImageFileName() {
+        String fileName = getClass().getSimpleName().toLowerCase() + ".gif";
+        if (!isAlive()) {
+            fileName =  getClass().getSimpleName().toLowerCase() + "_dead.gif";
+        }
+        return fileName;
+    }
+
+    @Override
+    public final Direction getDirection() {
+        return myDir;
+    }
+
+    @Override
+    public final int getX() {
+        return myX;
+    }
+
+    @Override
+    public final int getY() {
+        return myY;
+    }
+
+    @Override
+    public final boolean isAlive() {
+        return myLife;
+    }
+
+    @Override
+    public final void poke() {
+        if (!isAlive()) {
+            myTillAlive++;
+            if (myTillAlive == myDeathTime) {
+                myTillAlive = 0;
+                myLife = true;
+                myDir = Direction.random();
+            }   
+        }
+    }
+
+    @Override
+    public final void reset() {
+        myX = myInitalX;
+        myY = myInitalY;
+        myDir = myInitialDir;
+        myLife = true;
+    }
+
+    @Override
+    public final void setDirection(final Direction theDir) {
+        myDir = theDir;
+    }
+
+    @Override
+    public final void setX(final int theX) {
+        myX = theX;
+    }
+
+    @Override
+    public final void setY(final int theY) {
+        myY = theY;
+        
+    }
+    @Override 
+    public final String toString() {
+        final StringBuilder sB = new StringBuilder(25);
+        sB.append(this.getClass().getSimpleName());
+        sB.append('(');
+        sB.append(this.getX());
+        sB.append(',');
+        sB.append(this.getY());
+        sB.append(") ");
+        sB.append(this.getDirection().letter());
+        return sB.toString();
+    }
+}

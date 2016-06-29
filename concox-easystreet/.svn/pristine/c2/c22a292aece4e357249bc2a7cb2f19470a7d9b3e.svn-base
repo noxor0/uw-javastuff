@@ -1,0 +1,124 @@
+/*
+ * TCSS 305 - Easy Street
+ */
+package model;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+/**
+ * @author concox
+ * @version 1.0
+ *
+ */
+public abstract class AbstractVehicle implements Vehicle { 
+    /**
+     * A static number to determine if the myVaildDir list is full or not.
+     * If the size of the myVaildDir List is 3, there can be no more direction options.
+     */
+    protected static final int MAX_DIR = 3;
+    /**
+     * X value of the vehicle.
+     */
+    protected int myX;
+    /**
+     * Y value of the vehicle.
+     */
+    protected int myY;
+    /**
+     * Direction of the vehicle.
+     */
+    protected Direction myDir;
+    /**
+     * Determines if the vehicle can move or not, also determines which gif to use. 
+     */
+    protected boolean myLife = true; //false dead
+    /**
+     * Amount of turns it takes for the vehicle to revive.
+     */
+    protected int myDeathTime;
+    /**
+     * An array list that holds all valid directions for the vehicle.
+     */
+    protected List<Direction> myValidDir; 
+    /**
+     * Random number generator used for all vehicles. 
+     */
+    protected Random myRandGen;
+    
+    @Override
+    public boolean canPass(final Terrain theTerrain, final Light theLight) {
+        return theTerrain != Terrain.WALL;
+    }
+
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors) {
+        
+        return myDir;
+        
+    }
+
+    @Override
+    public void collide(final Vehicle theOther) {
+        
+    }
+
+    @Override
+    public int getDeathTime() {
+        return myDeathTime;
+    }
+
+    @Override
+    public String getImageFileName() {
+        return null;
+    }
+
+    @Override
+    public Direction getDirection() {
+        return myDir;
+    }
+
+    @Override
+    public int getX() {
+        return myX;
+    }
+
+    @Override
+    public int getY() {
+        return myY;
+    }
+
+    @Override
+    public boolean isAlive() {
+        return myLife;
+    }
+
+    @Override
+    public void poke() {
+        myDeathTime--;
+        if (myDeathTime == 0) {
+            myLife = true;
+        }   
+    }
+
+    @Override
+    public void reset() {
+    }
+
+    @Override
+    public void setDirection(final Direction theDir) {
+        myDir = theDir;
+    }
+
+    @Override
+    public void setX(final int theX) {
+        myX = theX;
+    }
+
+    @Override
+    public void setY(final int theY) {
+        myY = theY;
+        
+    }
+}

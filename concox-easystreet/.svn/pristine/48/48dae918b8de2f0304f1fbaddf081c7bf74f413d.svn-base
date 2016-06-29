@@ -1,0 +1,77 @@
+package tests;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import model.Atv;
+import model.Direction;
+import model.Terrain;
+import org.junit.Test;
+
+/**
+ * Tests the atv class.
+ * 
+ * @author noxor
+ * @version 1.0
+ *
+ */
+public class AtvTest {
+    
+    /**
+     * The number of times to repeat a test to have a high probability that all
+     * random possibilities have been explored.
+     */
+    private static final int TRIES_FOR_RANDOMNESS = 50;
+
+    /**
+     * Constructor test.
+     */
+    @Test
+    public void testAtv() {
+        final Atv atv = new Atv(10, 11, Direction.NORTH);
+        assertEquals("atn x coordinate not initialized correctly!", 10, atv.getX());
+        assertEquals("atv y coordinate not initialized correctly!", 11, atv.getY());
+        assertEquals("atv direction not initialized correctly!",
+                     Direction.NORTH, atv.getDirection());
+        assertEquals("atv death time not initialized correctly!", 20, atv.getDeathTime());
+        assertTrue("atv isAlive() fails initially!", atv.isAlive());
+    }
+
+    /**
+     * Direction test.
+     */
+    @Test
+    public void testChooseDirection() {
+        final Map<Direction, Terrain> neighbors = new HashMap<Direction, Terrain>();
+        neighbors.put(Direction.WEST, Terrain.GRASS);
+        neighbors.put(Direction.NORTH, Terrain.STREET);
+        neighbors.put(Direction.EAST, Terrain.CROSSWALK);
+        neighbors.put(Direction.SOUTH, Terrain.LIGHT);
+        boolean seenWest = false;
+        boolean seenNorth = false;
+        boolean seenEast = false;
+        boolean seenSouth = false;
+        
+        final Atv atv = new Atv(0, 0, Direction.SOUTH);
+        
+        for (int count = 0; count < TRIES_FOR_RANDOMNESS; count++) {
+            final Direction d = atv.chooseDirection(neighbors);
+            
+            if (d == Direction.WEST) {
+                seenWest = true;
+            } else if (d == Direction.NORTH) {
+                seenNorth = true;
+            } else if (d == Direction.EAST) {
+                seenEast = true;
+            } else if (d == Direction.SOUTH) { // this should NOT be chosen
+                seenSouth = true;
+            }
+        }
+        assertTrue("Atv chooseDirection() fails to select randomly "
+                        + "among all possible valid choices!",
+                        seenWest || seenNorth || seenEast || seenSouth);
+    }
+}

@@ -1,0 +1,101 @@
+/*
+ * Unit test demo code for TCSS 305
+ */
+package test;
+
+import static org.junit.Assert.*;
+
+import shape.Circle;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * Tests of the Circle class.
+ * 
+ * @author Connor
+ * @version 1.0
+ */
+public class CircleTest {
+
+    private Circle myCircle;
+    
+    /**
+     * @throws java.lang.Exception
+     */
+    @Before
+    public void setUp() throws Exception {
+    }
+
+    /**
+     * Test method for {@link Circle#Circle(double, java.awt.Point, java.awt.Color)}.
+     */
+    @Test
+    public void testCircleDoublePointColor() {
+        fail("Not yet implemented");
+    }
+
+    /**
+     * Test method for {@link Circle#Circle()}.
+     */
+    @Test
+    public void testCircle() {
+        fail("Not yet implemented");
+    }
+
+    /**
+     * Test method for {@link Circle#setRadius(double)}.
+     */
+    @Test
+    public void testSetRadius() {
+        fail("Not yet implemented");
+    }
+
+    /**
+     * Test method for {@link Circle#setCenter(java.awt.Point)}.
+     */
+    @Test
+    public void testSetCenter() {
+        fail("Not yet implemented");
+    }
+
+    /**
+     * Test method for {@link Circle#setColor(java.awt.Color)}.
+     */
+    @Test
+    public void testSetColor() {
+        fail("Not yet implemented");
+    }
+
+    /**
+     * Test method for {@link Circle#calculateDiameter()}.
+     */
+    @Test
+    public void testCalculateDiameter() {
+        fail("Not yet implemented");
+    }
+
+    /**
+     * Test method for {@link Circle#calculateCircumference()}.
+     */
+    @Test
+    public void testCalculateCircumference() {
+        fail("Not yet implemented");
+    }
+
+    /**
+     * Test method for {@link Circle#calculateArea()}.
+     */
+    @Test
+    public void testCalculateArea() {
+        fail("Not yet implemented");
+    }
+
+    /**
+     * Test method for {@link Circle#toString()}.
+     */
+    @Test
+    public void testToString() {
+        fail("Not yet implemented");
+    }
+
+}

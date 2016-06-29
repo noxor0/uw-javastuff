@@ -1,0 +1,170 @@
+/*
+ * TCSS 305
+ * Assignment 2 - Shopping Cart
+ */
+
+package model;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
+import java.util.Locale;
+import java.util.Objects;
+
+/**The Item class for the shopping cart GUI.
+ * Holds name and price from the text file.
+ *
+ * @author concox
+ * @version 1.0
+ */
+
+public final class Item {
+
+    /**
+     * @param myName Name of the item.
+     */
+    private final String myName;
+    /**
+     * @param myPrice Name of the price.
+     */
+    private final BigDecimal myPrice;
+    /**
+     * @param myBulkQuantity Value required to achieve bulk price.
+     */
+    private final int myBulkQuantity;
+    /**
+     * @param myBulkPrice Cheaper (lower) price of the item when quantity reached.
+     */
+    private final BigDecimal myBulkPrice;
+    /**
+     * @param myInBulk Determines if item has bulk price. 
+     * Don't know why check style wanted it named like that.
+     */
+    private final boolean myIsBulk;
+    /**
+     * Format prices of the item class.
+     */
+    private final NumberFormat myFormat = NumberFormat.getCurrencyInstance(Locale.US);
+
+    /**
+     * This is default constructor, not used for bulk.
+     * 
+     * @param theName The name value passed in.
+     * @param thePrice The Price value passed in
+     */
+    public Item(final String theName, final BigDecimal thePrice) {
+        if (theName == null) {
+            throw new IllegalArgumentException("Not vaild name");
+        }
+        if (thePrice.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Invalid Pricing"); 
+        }
+        myName = theName;
+        myPrice = thePrice.setScale(2, RoundingMode.HALF_EVEN);
+        myIsBulk = false;
+        myBulkQuantity = 0;
+        myBulkPrice = null;
+    }
+    
+    /**
+     * This is overloaded constructor, used for bulk items.
+     * 
+     * I originally wanted to use a null pointer exception for the name, but I got a warning.
+     * Is there a problem with having it set as a IllegalArgumentException? 
+     * It is the same in the test class. 
+     * 
+     * @param theName The name value passed in.
+     * @param thePrice The price value passed in. 
+     * @param theBulkQuantity The quantity needed to use bulk price.
+     * @param theBulkPrice The price of bulk items. 
+     */
+    public Item(final String theName, final BigDecimal thePrice, final int theBulkQuantity,
+                final BigDecimal theBulkPrice) {
+        /*
+         * Using IllegalArgumentException. According to PMD Rules on Null Pointer:
+         * Consider using an IllegalArgumentException instead; 
+         * this will be clearly seen as a programmer-initiated exception.
+         */
+        if (theName == null) {
+            throw new IllegalArgumentException("Invaild Name"); //Null pointer? 
+        }
+        if (thePrice.compareTo(BigDecimal.ZERO) <= 0 
+                        || theBulkPrice.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Invalid Price");
+        }
+        if (theBulkQuantity <= 0) {
+            throw new IllegalArgumentException("Invalid quantitiy");
+        }
+        myName = theName;
+        myPrice = thePrice.setScale(2, RoundingMode.HALF_EVEN);
+        myBulkPrice = theBulkPrice.setScale(2, RoundingMode.HALF_EVEN);
+        myBulkQuantity = theBulkQuantity;
+        myIsBulk = true;
+    }
+    
+
+    /**
+     * @return the normal price of the item.
+     */
+    public BigDecimal getPrice() {
+        return myPrice;
+    }
+
+
+    /**
+     * @return the amount of items needed to get bulk price.
+     */
+    public int getBulkQuantity() {
+        return myBulkQuantity;
+    }
+
+
+    /**
+     * @return the price of bulk items when quantity purchased.
+     */
+    public BigDecimal getBulkPrice() {
+        return myBulkPrice;
+    }
+
+
+    /**
+     * @return a boolean statement, determines if item is bulk.
+     */
+    public boolean isBulk() {
+        return myIsBulk;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder stringB = new StringBuilder(myName);
+        stringB.append(", ");
+        stringB.append(myFormat.format(myPrice));
+        if (myIsBulk) {
+            stringB.append(" (");
+            stringB.append(myBulkQuantity);
+            stringB.append(" for ");
+            stringB.append(myFormat.format(myBulkPrice));
+            stringB.append(')');
+        }
+        return stringB.toString();
+    }
+
+    @Override
+    public boolean equals(final Object theOther) {
+        boolean returnValue = false;
+        if (this == theOther) {
+            returnValue = true;
+        } else if (theOther != null && this.getClass() == theOther.getClass()) {
+            final Item otherItem = (Item) theOther;
+            returnValue = myPrice.compareTo(otherItem.myPrice) == 0
+                            && Objects.equals(myName, otherItem.myName);
+        }
+        return returnValue;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(myName, myPrice);
+    }
+
+}

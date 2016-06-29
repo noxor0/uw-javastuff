@@ -1,0 +1,236 @@
+// TCSS 305 - Spring 2016
+
+package gui;
+
+import filters.EdgeDetectFilter;
+import filters.EdgeHighlightFilter;
+import filters.Filter;
+import filters.FlipHorizontalFilter;
+import filters.FlipVerticalFilter;
+import filters.GrayscaleFilter;
+import filters.SharpenFilter;
+import filters.SoftenFilter;
+import image.PixelImage;
+
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+/**
+ * SnapShot, A simple image editing program that can change the image in many ways.
+ * Opening and saving file functionality included!
+ * 
+ * @author concox
+ * @version 1.0
+ */
+public final class SnapShopGUI {
+    /**
+     * A file chooser that can be used for open / save dialogs.
+     */
+    private final JFileChooser myChooser = new JFileChooser(new File(System.getProperty
+                                                                     ("user.dir")));
+    /**
+     * Pixel Image that is used for displaying and saving.
+     */
+    private PixelImage myImage;
+    /**
+     * A JLabel to display the PixelImage as an Icon.
+     */
+    private final JLabel myPictureLabel = new JLabel();
+    /**
+     * Frame for the application.
+     */
+    private final JFrame myFrame = new JFrame("Snapshot - Spring 2016");
+    /**
+     * Simple boolean to tell the program if the file is open or not.
+     * Changes how some buttons are displayed.
+     */
+    private boolean myIsOpen;
+    /**
+     * Holds all the buttons created by the GUI. Used to enable/disable.
+     */
+    private final List<JButton> myButtonList = new ArrayList<>();
+    /**
+     * Creates an array list to populate the GUI. 
+     * 
+     * @return returns list of all the buttons that user wants to display
+     */
+    private List<Filter> availableFilter() { 
+        final ArrayList<Filter> filterList = new ArrayList<>();
+        //Add button names here.
+        filterList.add(new EdgeDetectFilter());
+        filterList.add(new EdgeHighlightFilter());
+        filterList.add(new FlipHorizontalFilter());
+        filterList.add(new FlipVerticalFilter());
+        filterList.add(new GrayscaleFilter());
+        filterList.add(new SoftenFilter());
+        filterList.add(new SharpenFilter());
+        return filterList;
+    }
+    /**
+     * Creates and displays the program.
+     */
+    public void start() {  
+        final JPanel westPanel = new JPanel();
+        final JPanel southPanel = new JPanel(); 
+        westPanel.setLayout(new GridLayout(availableFilter().size(), 1));
+        for (final Filter flt: availableFilter()) {
+            westPanel.add(createButton(flt));
+        }
+        southPanel.add(createOpenButton());
+        southPanel.add(createSaveButton());
+        southPanel.add(createClearButton());
+        
+        myFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        myFrame.setLocationRelativeTo(null);
+        myFrame.add(westPanel, BorderLayout.WEST);
+        myFrame.add(southPanel, BorderLayout.SOUTH);
+        myFrame.pack();
+        toggleButton();
+        myFrame.setVisible(true);
+    }
+    /**
+     * @param theFilter the filter passed in to create a button.
+     * @return returns the button
+     */
+    private JButton createButton(final Filter theFilter) {
+        //I cannot believe that I did not think about just importing the filter. I feel dumb.
+        final JButton button = new JButton(theFilter.getDescription());
+        myButtonList.add(button);
+        /**
+         * Inner Class that handles applying a filter.
+         * This could be an anonymous class, oops.
+         */
+        class AnActionListener implements ActionListener { 
+            /**
+             * Creates the action listener that calls the filter method of each class.
+             * Also adds each button to the button ArrayList.
+             * 
+             * @param theEvent ignored.
+             */
+            public void actionPerformed(final ActionEvent theEvent) {
+                theFilter.filter(myImage);
+                myPictureLabel.setIcon(new ImageIcon(myImage));
+                myFrame.add(myPictureLabel);                
+                
+            }
+        }
+        button.addActionListener(new AnActionListener());
+        return button;
+    }
+    /**
+     * Creates a save button to save a file in the directory that the user chooses.
+     * 
+     * @return return the save button.
+     */
+    private JButton createSaveButton() {
+        final JButton button = new JButton("Save File...");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent theEvent) {
+                fileSaverHandler();
+            }
+        });
+        myButtonList.add(button);
+        return button;
+    }
+    /**
+     * Creates an open button at the bottom of the window, always enabled.
+     * 
+     * @return return the open button.
+     */
+    private JButton createOpenButton() {
+        final JButton button = new JButton("Open...");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent theEvent) {
+                fileChooserHandler();
+                toggleButton();
+            }
+        });
+        return button;
+    }
+    /**
+     * Creates a clear button at the bottom of the window.
+     * Only enabled when a picture is opened.
+     * 
+     * @return return the open button.
+     */
+    private JButton createClearButton() {
+        final JButton button = new JButton("Close Image");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(final ActionEvent theEvent) {
+                if (myIsOpen) {
+                    myFrame.remove(myPictureLabel);
+                    myFrame.pack();
+                    myIsOpen = false;
+                    toggleButton();
+                }
+            }
+        });
+        myButtonList.add(button);
+        return button;
+    }
+    /**
+     * Handles the choosing of a file when the open button is pressed.
+     * Only files supported are .gif, .png, .jpg. 
+     */
+    private void fileChooserHandler() {
+        final int returnVal = myChooser.showOpenDialog(myChooser);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            if (myChooser.getSelectedFile().getName().toLowerCase().endsWith(".gif")
+                      || myChooser.getSelectedFile().getName().toLowerCase().endsWith(".png") 
+                     || myChooser.getSelectedFile().getName().toLowerCase().endsWith(".jpg")) {
+                try {
+                    myImage = PixelImage.load(myChooser.getSelectedFile());
+                    myPictureLabel.setIcon(new ImageIcon(myImage));
+                    myFrame.add(myPictureLabel);
+                    myIsOpen = true;
+                    myFrame.pack();
+                } catch (final IOException e) {
+                    System.out.println("life is good");
+                }
+            } else {
+                JOptionPane.showMessageDialog(myChooser, "Please select an image! "
+                                + "Or Image type not supported", 
+                                "Select image", JOptionPane.ERROR_MESSAGE);
+            }
+        } 
+    }
+    /**
+     * Saves the image to a file at the path given.
+     */
+    private void fileSaverHandler() {
+        final int returnVal = myChooser.showSaveDialog(myChooser);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File saveThisFile = myChooser.getSelectedFile();
+            try {
+                final String fileName = saveThisFile.getCanonicalPath();
+                saveThisFile = new File(fileName);
+                myImage.save(saveThisFile);
+                
+            } catch (final IOException e) {
+                JOptionPane.showMessageDialog(myChooser, "Something went wrong!");
+            }
+        }
+    }
+    /**
+     * Changes the button to enable/disable if an image is open or not.
+     */
+    private void toggleButton() {
+        for (final JButton btn : myButtonList) {
+            btn.setEnabled(myIsOpen);
+        }
+    }
+}

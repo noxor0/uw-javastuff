@@ -1,0 +1,27 @@
+//package tests;
+//
+//import static org.junit.Assert.*;
+//
+//import java.math.BigDecimal;
+//
+//import org.junit.Before;
+//import org.junit.Test;
+//import model.ItemOrder;
+//import model.Item;
+//
+//public class ItemOrderTest {
+//    
+//    private ItemOrder itemO;
+//    private Item item = new Item ("Banana", new BigDecimal("2.00"));
+//
+//    @Before
+//    public void setUp(){
+//        itemO = new ItemOrder(item, 10);
+//    }
+//
+//    @Test
+//    public void testToString() {
+//        System.out.println(itemO);
+//    }
+//
+//}

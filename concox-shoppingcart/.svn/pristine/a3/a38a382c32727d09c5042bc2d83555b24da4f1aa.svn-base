@@ -1,0 +1,153 @@
+/*
+ * TCSS 305
+ * Assignment 2 - ShoppingCart
+ */
+
+package model;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+//import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
+/**The Shopping Cart class for the shopping cart GUI.
+ * Calculates the total of the items selected.
+ * 
+ * @author Concox
+ * @version 1.0
+ */
+
+public class ShoppingCart {
+
+    /**
+     * 
+     */
+//    private final ArrayList<ItemOrder> myCartList;
+    private final Set<ItemOrder> myCartSet;
+    
+    /**
+     * 
+     */
+    private BigDecimal myTotal; 
+    
+    /**
+     * 
+     */
+    private boolean myIsMembership;
+    
+    /**
+     * 
+     */
+    public ShoppingCart() {
+        myCartSet = new HashSet<>();
+        myIsMembership = false;
+    }
+
+    /**
+     * Appends an ItemOrder to the end of the ArrayList.
+     * @param theOrder ItemOrder to be added.
+     */
+ //TODO: this isn't working at all
+    public void add(final ItemOrder theOrder) { 
+//        System.out.println(theOrder.toString());
+        if (!myCartSet.contains(theOrder)) {
+//            System.out.println("true");
+            myCartSet.add(new ItemOrder(theOrder.getItem(), theOrder.getQuantity()));
+        }
+    }
+    
+    /**
+     * @return returns size of the list.
+     */
+    public int size() { 
+        return myCartSet.size();
+    }
+
+
+    /**
+     * @param theMembership sets the membership status. 
+     */
+    public void setMembership(final boolean theMembership) {
+        myIsMembership = theMembership;
+    }
+    
+    /**
+     * @return membership status.
+     */
+    
+    public boolean isMembership() {
+        return myIsMembership;
+    }
+
+    /**
+     * Calculates the total of the shopping cart. This formula takes into account bulk prices.
+     * Dynamically updates if more items are added or items change price.
+     * 
+     * @return Returns the total of the shopping cart in BigDecimal 
+     */
+    public BigDecimal calculateTotal() {
+        
+        double doubleTotal = 0;
+        for (final ItemOrder order : myCartSet) {
+            if (myIsMembership) {
+                if (order.getItem().isBulk()) {
+//                    System.out.println(order.toString());
+                    //adds the remaining items at non-bulk price
+                    //remaining defined as the remainder of the quotient (%)
+                    final int nonBulkIntCount = order.getQuantity() 
+                                    % order.getItem().getBulkQuantity();
+//                    System.out.println("count: " + nonBulkIntCount);
+                    doubleTotal += nonBulkIntCount * order.getItem().getPrice().
+                                    doubleValue();
+//                    System.out.println("nonBulkTotalCount: " + doubleTotal);
+                    
+                    //divides and rounds down to get the amount of groupings
+                    //Also known as: How many groups can we break the total into?
+                    //multiplies that value by the bulk price
+                    final BigDecimal bulkCountBig = new BigDecimal(order.getQuantity() 
+                                                 / order.getItem().getBulkQuantity());
+//                    System.out.println("bulkCountBig: " + bulkCountBig);
+//                    System.out.println("bulk price: " + order.getItem().getBulkPrice());
+                    doubleTotal +=  order.getItem().getBulkPrice().multiply(bulkCountBig.
+                                     setScale(2, RoundingMode.DOWN)).doubleValue();
+//                    System.out.println(doubleTotal);
+                } else {
+                    final BigDecimal normalItemCount = order.getItem().getPrice().multiply
+                                    (new BigDecimal(order.getQuantity()));
+                    doubleTotal += normalItemCount.doubleValue();
+                }
+            } else {
+                final BigDecimal normalItemCount = order.getItem().getPrice().multiply
+                                (new BigDecimal(order.getQuantity()));
+                doubleTotal += normalItemCount.doubleValue();
+            }
+        }
+//        System.out.println("total: " + doubleTotal);
+        myTotal = new BigDecimal(doubleTotal).setScale(2, RoundingMode.HALF_EVEN);
+//        System.out.println(myCartSet.size());
+        return myTotal;
+    }
+    
+    /**
+     * 
+     */
+    public void clear() {
+        if (!myCartSet.isEmpty()) {
+            myCartSet.clear();
+            myTotal = BigDecimal.ZERO;
+        }
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sB = new StringBuilder("My Cart: \n");
+        for (final ItemOrder order : myCartSet) {
+            sB.append(order.toString());
+            sB.append('\n');
+        }
+        return sB.toString();
+    }
+
+}

@@ -1,0 +1,46 @@
+/*
+ * TCSS 305 - Easy Street
+ */
+package model;
+
+import java.util.Map;
+
+/**
+ * Atv class.
+ * 
+ * @author noxor
+ * @version 1.0
+ */
+public class Atv extends AbstractVehicle {
+    
+    private static final int ATV_DEATH = 20;
+    
+    public Atv(final int theX, final int theY, final Direction theDir) {
+        myX = theX;
+        myY = theY;
+        myDir = theDir;
+        myDeathTime = ATV_DEATH;
+    }
+    
+
+    @Override
+    public boolean canPass(final Terrain theTerrain, final Light theLight) {
+        return theTerrain != Terrain.WALL;
+    }
+    
+    @Override
+    public Direction chooseDirection(Map<Direction, Terrain> theNeighbors) {
+        return null;
+    }  
+
+    @Override
+    public void collide(final Vehicle theOther) {
+        if (myX == theOther.getX() && myY == theOther.getY()) {
+            System.out.println("clash");
+        }
+        
+    }
+
+
+
+}

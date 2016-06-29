@@ -1,0 +1,21 @@
+package tools;
+
+/**
+ * An abstract class of a tool, guidelines for each tool.
+ * 
+ * @author concox
+ * @version 1.0
+ *
+ */
+public abstract class AbstractTool implements ToolInterface {
+
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    
+
+}

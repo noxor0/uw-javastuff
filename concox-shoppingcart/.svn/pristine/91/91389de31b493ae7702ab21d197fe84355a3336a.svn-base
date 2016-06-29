@@ -1,0 +1,118 @@
+package tests;
+
+import static org.junit.Assert.*;
+
+import java.math.BigDecimal;
+import model.Item;
+import model.ItemOrder;
+import model.ShoppingCart;
+
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * This isn't graded, right? I'm not going to do comments. 
+ * 
+ * @author concox
+ * @version 1.1
+ */
+public class ShoppingCartTest {
+
+    private ShoppingCart myCart;
+    private Item bananaItem = new Item("Banana", new BigDecimal("2.99"));
+    private Item tomatoItem = new Item("Tomato", new BigDecimal("1.99"), 
+                                      3, new BigDecimal(".59"));
+    private ItemOrder bananaOrder = new ItemOrder(bananaItem, 3);
+    private ItemOrder tomatoOrder = new ItemOrder(tomatoItem, 6);
+    
+    /**
+     * 
+     */
+    @Before
+    public void setUp() {
+//        myCart.setMembership(true);
+        myCart = new ShoppingCart();
+        myCart.add(bananaOrder);
+        myCart.add(tomatoOrder);
+    }
+    
+    /**
+     * 
+     */
+    @Test
+    public void testAdd() {
+        myCart.clear();
+        assertEquals(0, myCart.size());
+        myCart.add(bananaOrder);
+        assertEquals(1, myCart.size());
+    }
+
+    /**
+     * 
+     */
+    @Test
+    public void testAdd1() {
+//        System.out.println(myCart.toString());
+        myCart.add(bananaOrder);
+        assertEquals(3, myCart.size());
+        System.out.println(myCart.toString());
+    }
+    /**
+     * 
+     */
+    @Test
+    public void testisMembership() {
+        myCart.setMembership(true);
+        assertTrue(myCart.isMembership());
+    }
+
+    /**
+     * 
+     */
+    @Test
+    public void testCalculateTotal() {
+        myCart.setMembership(true);
+        assertEquals(new BigDecimal("10.15"), myCart.calculateTotal());
+        
+    }
+    
+    /**
+     * 
+     */
+    @Test
+    public void testCalculateTotal1() {
+        myCart.setMembership(false);
+        assertEquals(new BigDecimal("20.91"), myCart.calculateTotal());
+        
+    }
+    
+
+    /**
+     * 
+     */
+    @Test
+    public void testClear() {
+        myCart.clear();
+        assertEquals(0, myCart.size());
+    }
+    
+    /**
+     * 
+     */
+    @Test
+    public void testClear1() {
+        myCart.clear();
+        myCart.clear();
+    }
+
+    /**
+     * 
+     */
+//    @Test
+//    public void testToString() {
+//        assertEquals("My Cart: \nBanana, 2.99:3\nTomato, 1.99 (3 for 0.59):6\n", 
+//                     myCart.toString());
+//        
+//    }
+
+}

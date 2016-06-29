@@ -1,0 +1,108 @@
+/*
+ * TCSS 305 - Easy Street Spring 2016
+ * Spring 2016
+ */
+
+package model;
+
+import java.util.Map;
+
+/**
+ * @author concox
+ * @version 1.0
+ *
+ */
+public final class Bicycle extends AbstractVehicle {
+    /**
+     * Amount of turns it takes for the bicycle to revive.
+     */
+    private static final int BIKE_DEATH = 50;
+
+    /**
+     * Constructs a human, with x,y and a direction.
+     * 
+     * @param theX The X value of the human.
+     * @param theY The Y value of the human.
+     * @param theDir The initial direction of the human.
+     */
+    public Bicycle(final int theX, final int theY, final Direction theDir) {
+        super(theX, theY, theDir);
+        myDeathTime = BIKE_DEATH;
+    }
+
+    @Override
+    public boolean canPass(final Terrain theTerrain, final Light theLight) {
+        boolean isPassing = false;
+        if (theTerrain == Terrain.TRAIL || theTerrain == Terrain.STREET) {
+            isPassing = true;
+        }
+        if (theTerrain == Terrain.CROSSWALK || theTerrain == Terrain.LIGHT) {
+            if (theLight == Light.GREEN) {
+                isPassing = true;
+            } else {
+                isPassing = false;
+            }
+        }
+        return isPassing;
+    }
+
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors) {
+        Direction newDir = myDir;
+        Direction trailDir = newDir;
+        boolean trailPresent = false;
+        // test
+        for (final Map.Entry<Direction, Terrain> entry : theNeighbors.entrySet()) {
+            if (entry.getValue() == Terrain.TRAIL && entry.getKey() != myDir.reverse()) {
+                trailPresent = true;
+                trailDir = entry.getKey();
+            }
+        }
+        final Direction[] dirArray = validDirections(theNeighbors);
+        if (dirArray[THREE] != null) {
+            newDir = dirArray[THREE];
+        }
+        if (dirArray[1] != null) {
+            newDir = dirArray[1];
+        }
+        if (dirArray[0] != null) {
+            newDir = dirArray[0];
+        }
+        if (dirArray[2] != null) {
+            newDir = dirArray[2];
+        }
+        if (trailPresent) {
+            newDir = trailDir;
+        }
+
+        return newDir;
+    }
+
+    /**
+     * makes an array of valid direction values for the bicycle to take.
+     * 
+     * @param theNeighbors the direction / terrain map passed in.
+     * @return an Array of valid direction values
+     */
+    private Direction[] validDirections(final Map<Direction, Terrain> theNeighbors) {
+        final Direction[] dirArray = new Direction[FOUR];
+        for (final Map.Entry<Direction, Terrain> entry : theNeighbors.entrySet()) {
+            if (entry.getValue() == Terrain.CROSSWALK 
+                            || entry.getValue() == Terrain.LIGHT
+                            || entry.getValue() == Terrain.STREET) {
+                if (entry.getKey() == myDir.left()) {
+                    dirArray[0] = entry.getKey();
+                }
+                if (entry.getKey() == myDir.right()) {
+                    dirArray[1] = entry.getKey();
+                }
+                if (entry.getKey() == myDir) {
+                    dirArray[2] = entry.getKey();
+                } else {
+                    dirArray[THREE] = entry.getKey();
+                }
+            }
+        }
+        return dirArray;
+    }
+}

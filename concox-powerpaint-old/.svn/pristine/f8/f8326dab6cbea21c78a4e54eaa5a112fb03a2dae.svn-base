@@ -1,0 +1,119 @@
+ /* 
+ *TCSS 305 - Assignment 4: PowerPaint
+ */
+package tools;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Line2D;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JPanel;
+
+import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
+
+import gui.PowerPaintMenus;
+
+/**
+ * White space in the middle of the program to draw on.
+ * 
+ * @author concox
+ * @version 1.0
+ */
+public class Canvas extends JPanel {
+    /**
+     * The width of the panel.
+     */
+    public static final int WIDTH = 600;
+    /**
+     * The height of the panel.
+     */
+    public static final int HEIGHT = 300;
+    /**
+     * The color to paint with.
+     */
+    public static final Color FOREGROUND_COLOR = new Color(51, 0, 111);
+    /**
+     * The serial version UID.
+     */
+    private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private final List<Shape> myFinishedDrawings;
+    /**
+     * 
+     */
+    private ToolInterface myTool = new LineTool();
+    /**
+     * 
+     */
+    private Shape myCurrentShape;
+    /**
+     * 
+     */
+    public Canvas() {
+        super();
+        setBackground(Color.WHITE);
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        myFinishedDrawings = new ArrayList<>();
+        addMouseListener(new MyMouseListener());
+        
+    } 
+    /**
+     * Paints the current path.
+     * 
+     * @param theGraphics The graphics context to use for painting.
+     */
+    @Override
+    public void paintComponent(final Graphics theGraphics) {
+        super.paintComponent(theGraphics);
+        final Graphics2D g2d = (Graphics2D) theGraphics;
+
+        g2d.setPaint(PowerPaintMenus.getDrawColor());
+        g2d.setStroke(new BasicStroke(PowerPaintMenus.getThickness()));
+        if (myCurrentShape != null) {
+            g2d.draw(myCurrentShape);            
+        }
+    }    
+    /**
+     * blah.
+     * 
+     * @author noxor
+     * @version
+     *
+     */
+    private class MyMouseListener extends MouseAdapter {
+        /**
+         * Handles a click event.
+         * 
+         * @param theEvent The event.
+         */
+        @Override
+        public void mousePressed(final MouseEvent theEvent) {
+            myCurrentShape = myTool.start(theEvent.getX(), theEvent.getY());
+            repaint();
+        }
+        
+        @Override
+        public void mouseDragged(final MouseEvent theEvent) {
+            myCurrentShape = myTool.move(theEvent.getX(), theEvent.getY());
+            System.out.println("Why doesnt this work?");
+            repaint();
+        }
+        
+        @Override
+        public void mouseReleased(final MouseEvent theEvent) {
+            myCurrentShape = myTool.end(theEvent.getX(), theEvent.getY());
+            repaint();
+//            myFinishedDrawings.add(myLine);
+        }
+    }
+}

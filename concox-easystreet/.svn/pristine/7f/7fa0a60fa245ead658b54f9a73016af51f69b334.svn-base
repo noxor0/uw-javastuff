@@ -1,0 +1,39 @@
+/*
+ *TCSS 305 - Easy Street
+ * Spring 2016
+ */
+package model;
+
+import java.util.Map;
+
+/**
+ * @author concox
+ * @version 1.0
+ *
+ */
+public final class Bicycle extends AbstractVehicle {
+    /**
+     * Amount of turns it takes for the bicycle to revive.
+     */
+    private static final int BIKE_DEATH = 50;
+    /**
+     * Constructs a human, with x,y and a direction.
+     * 
+     * @param theX The X value of the human.
+     * @param theY The Y value of the human.
+     * @param theDir The initial direction of the human.
+     */
+    public Bicycle(final int theX, final int theY, final Direction theDir) {
+        super(theX, theY, theDir);
+        myDeathTime = BIKE_DEATH;
+    }
+    @Override
+    public boolean canPass(final Terrain theTerrain, final Light theLight) {
+        return true;
+    }
+    @Override
+    public Direction chooseDirection(final Map<Direction, Terrain> theNeighbors) {
+        return myDir;
+    }
+    
+}
